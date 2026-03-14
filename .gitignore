@@ -1,0 +1,17 @@
+# Dependency directories
+node_modules/
+
+# Firebase Service Account (গোপন ফাইল)
+service.json
+
+# Environment variables
+.env
+.env.local
+
+# Vercel folders
+.vercel
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
