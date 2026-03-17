@@ -16,12 +16,18 @@ module.exports = async (req, res) => {
 
     const { tokens, senderName, type, channelId } = req.body;
 
-    if (!tokens || !Array.isArray(tokens)) {
+    if (!tokens || !Array.isArray(tokens) || tokens.length === 0) {
       return res.status(400).json({ error: 'tokens array দিতে হবে' });
     }
 
-    // Full-Screen Intent সহ কলিং মেসেজ অবজেক্ট
+    // ৫. মেসেজ অবজেক্ট (index.js এর স্টাইলে সাজানো)
     const message = {
+      // এই notification ব্লকটা থাকলেই sentCount পজিটিভ আসবে
+      notification: {
+        title: `📞 Incoming Call`,
+        body: `${senderName || "কেউ একজন"} আপনাকে কল দিচ্ছে...`,
+      },
+      // ডেটা পার্ট (আপনার অ্যাপের লজিক ট্রিগার করার জন্য)
       data: {
         type: type || 'incoming_call',
         senderName: senderName || "Family Member",
@@ -30,22 +36,18 @@ module.exports = async (req, res) => {
       },
       android: {
         priority: 'high',
-        ttl: 0, 
         notification: {
-          title: `📞 Incoming Call from ${senderName || "Family"}`,
-          body: "কল রিসিভ করতে এখানে ট্যাপ করুন",
           channelId: 'default',
           sound: 'default',
           priority: 'max',
-          category: 'call', 
+          category: 'call',
           visibility: 'public',
-          // এই অংশটি অ্যাপ কিলড অবস্থায় কল ট্রিগার করার শেষ অস্ত্র
-          fullScreenIntent: true, 
         }
       },
       tokens: tokens,
     };
 
+    // ৫. মেসেজ পাঠানো (Multicast)
     const response = await admin.messaging().sendEachForMulticast(message);
 
     return res.status(200).json({
