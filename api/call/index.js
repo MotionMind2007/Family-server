@@ -29,9 +29,17 @@ module.exports = async (req, res) => {
         isCall: "true" // স্ট্রিং হিসেবে পাঠাতে হয়
       },
       android: {
-        priority: 'high', // অ্যাপকে জাগানোর জন্য মাস্ট
-        ttl: 0, // সাথে সাথে ডেলিভারি করার জন্য
-      },
+        priority: 'high',
+        notification: {
+          channelId: 'default',
+          sound: 'default',
+          priority: 'max',
+          // অ্যান্ড্রয়েডকে কল হিসেবে ট্রিগার করার চেষ্টা
+          category: 'call', 
+          visibility: 'public',
+        }
+      }
+
       tokens: tokens,
     };
 
