@@ -20,33 +20,34 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'tokens array দিতে হবে' });
     }
 
-    // কলিং মেসেজ অবজেক্ট (Data-only Payload)
+    // কলিং মেসেজ অবজেক্ট
     const message = {
       data: {
-        type: type || 'incoming_call', // 'incoming_call' বা 'audio_call'
+        type: type || 'incoming_call',
         senderName: senderName || "Family Member",
         channelId: channelId || "family_call_room",
-        isCall: "true" // স্ট্রিং হিসেবে পাঠাতে হয়
+        isCall: "true" 
       },
       android: {
         priority: 'high',
+        ttl: 0, // যেন সাথে সাথে ডেলিভারি হয়
         notification: {
           channelId: 'default',
           sound: 'default',
           priority: 'max',
-          // অ্যান্ড্রয়েডকে কল হিসেবে ট্রিগার করার চেষ্টা
           category: 'call', 
           visibility: 'public',
         }
       },
-      tokens: tokens,
+      tokens: tokens, // sendEachForMulticast এর জন্য এটা এখানেই থাকবে
     };
 
     const response = await admin.messaging().sendEachForMulticast(message);
 
     return res.status(200).json({
       success: true,
-      sentCount: response.successCount
+      sentCount: response.successCount,
+      failureCount: response.failureCount
     });
 
   } catch (error) {
