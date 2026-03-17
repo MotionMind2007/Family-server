@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'tokens array দিতে হবে' });
     }
 
-    // কলিং মেসেজ অবজেক্ট
+    // Full-Screen Intent সহ কলিং মেসেজ অবজেক্ট
     const message = {
       data: {
         type: type || 'incoming_call',
@@ -30,16 +30,20 @@ module.exports = async (req, res) => {
       },
       android: {
         priority: 'high',
-        ttl: 0, // যেন সাথে সাথে ডেলিভারি হয়
+        ttl: 0, 
         notification: {
+          title: `📞 Incoming Call from ${senderName || "Family"}`,
+          body: "কল রিসিভ করতে এখানে ট্যাপ করুন",
           channelId: 'default',
           sound: 'default',
           priority: 'max',
           category: 'call', 
           visibility: 'public',
+          // এই অংশটি অ্যাপ কিলড অবস্থায় কল ট্রিগার করার শেষ অস্ত্র
+          fullScreenIntent: true, 
         }
       },
-      tokens: tokens, // sendEachForMulticast এর জন্য এটা এখানেই থাকবে
+      tokens: tokens,
     };
 
     const response = await admin.messaging().sendEachForMulticast(message);
