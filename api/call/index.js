@@ -38,8 +38,7 @@ module.exports = async (req, res) => {
           category: 'call', 
           visibility: 'public',
         }
-      }
-
+      },
       tokens: tokens,
     };
 
